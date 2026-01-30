@@ -1,8 +1,26 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getProductById } from '@/lib/api';
+import { getProductById, getAllProducts } from '@/lib/api';
 import AddToCartButton from './AddToCartButton';
+
+/**
+ * Generate static params for product routes
+ * This tells Next.js which product IDs are valid
+ */
+export async function generateStaticParams() {
+  try {
+    const products = await getAllProducts();
+    // Return first 10 products as static, rest will be SSR
+    // This improves build time while still allowing dynamic routes
+    return products.slice(0, 10).map((product) => ({
+      id: product.id.toString(),
+    }));
+  } catch (error) {
+    console.error('Failed to generate static params:', error);
+    return [];
+  }
+}
 
 /**
  * Product Detail Page - Server Component
