@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 /**
  * Footer component
  * Includes copyright information and links
@@ -20,14 +22,14 @@ export default function Footer() {
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="text-gray-400 hover:text-white">
+                <Link href="/" className="text-gray-400 hover:text-white">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/cart" className="text-gray-400 hover:text-white">
+                <Link href="/cart" className="text-gray-400 hover:text-white">
                   Cart
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

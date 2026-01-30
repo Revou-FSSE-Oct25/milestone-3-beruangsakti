@@ -181,7 +181,7 @@ app/products/[id]/page.tsx
 
 This project is deployed on Vercel.
 
-**Live Demo:** [Add your Vercel URL here after deployment]
+**Live Demo:** https://revoshop-three.vercel.app
 
 ## 📝 Learning Outcomes
 

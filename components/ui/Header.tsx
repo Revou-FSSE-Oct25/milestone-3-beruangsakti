@@ -34,6 +34,7 @@ export default function Header() {
             <Link
               href="/cart"
               className="relative flex items-center space-x-1 text-gray-700 hover:text-gray-900"
+              aria-label={`Shopping cart${cartCount > 0 ? ` with ${cartCount} item${cartCount !== 1 ? 's' : ''}` : ''}`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +51,10 @@ export default function Header() {
                 />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span
+                  className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
+                  aria-label={`${cartCount} items in cart`}
+                >
                   {cartCount}
                 </span>
               )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCart } from '@/lib/cart-context';
+import { useToast } from '@/lib/toast-context';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,6 +11,7 @@ import Link from 'next/link';
  */
 export default function CartPage() {
   const { cart, removeFromCart, clearCart, getCartTotal, getCartCount } = useCart();
+  const { showToast } = useToast();
 
   const cartTotal = getCartTotal();
   const cartCount = getCartCount();
@@ -123,7 +125,7 @@ export default function CartPage() {
 
                 <button
                   className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                  onClick={() => alert('Checkout functionality coming soon!')}
+                  onClick={() => showToast('Checkout functionality coming soon!', 'info')}
                 >
                   Proceed to Checkout
                 </button>
