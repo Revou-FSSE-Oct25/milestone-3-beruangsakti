@@ -26,13 +26,13 @@ export async function getAllProducts(): Promise<Product[]> {
  */
 export async function getProductById(id: string): Promise<Product> {
   const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-    // Force cache to ensure data is available for static generation
-    // This ensures the data is cached at build time and available at runtime
-    cache: 'force-cache',
+    // Disable caching for SSR - fetch fresh data on each request
+    cache: 'no-store',
+    next: { revalidate: 0 },
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch product');
+    throw new Error(`Failed to fetch product ${id}: ${response.status} ${response.statusText}`);
   }
 
   return response.json();
