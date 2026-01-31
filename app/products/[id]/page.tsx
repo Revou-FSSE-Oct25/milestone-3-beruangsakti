@@ -52,7 +52,6 @@ export default async function ProductDetailPage({
               className="object-contain p-8"
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
-              unoptimized={product.image.startsWith('https://fakestoreapi.com/')}
             />
           </div>
 
