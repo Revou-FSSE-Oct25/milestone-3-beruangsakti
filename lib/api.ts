@@ -1,4 +1,5 @@
 import { Product } from './types';
+import { FALLBACK_PRODUCTS } from './products-data';
 
 const API_BASE_URL = 'https://fakestoreapi.com';
 
@@ -7,16 +8,21 @@ const API_BASE_URL = 'https://fakestoreapi.com';
  * @returns Promise<Product[]> - Array of products
  */
 export async function getAllProducts(): Promise<Product[]> {
-  const response = await fetch(`${API_BASE_URL}/products`, {
-    // Force cache to ensure data is available for static generation
-    cache: 'force-cache',
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/products`, {
+      cache: 'force-cache',
+    });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch products');
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
+    }
+
+    return response.json();
+  } catch (error) {
+    // Fallback to embedded data if API fails (e.g., Cloudflare blocking on Vercel)
+    console.warn('API fetch failed for all products, using fallback data:', error);
+    return FALLBACK_PRODUCTS;
   }
-
-  return response.json();
 }
 
 /**
@@ -25,17 +31,27 @@ export async function getAllProducts(): Promise<Product[]> {
  * @returns Promise<Product> - Product details
  */
 export async function getProductById(id: string): Promise<Product> {
-  const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-    // Disable caching for SSR - fetch fresh data on each request
-    cache: 'no-store',
-    next: { revalidate: 0 },
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+      // Disable caching for SSR - fetch fresh data on each request
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    });
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch product ${id}: ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch product ${id}: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    // Fallback to embedded data if API fails (e.g., Cloudflare blocking on Vercel)
+    console.warn(`API fetch failed for product ${id}, using fallback data:`, error);
+    const fallbackProduct = FALLBACK_PRODUCTS.find(p => p.id === parseInt(id));
+    if (!fallbackProduct) {
+      throw new Error(`Product ${id} not found in fallback data`);
+    }
+    return fallbackProduct;
   }
-
-  return response.json();
 }
 
 /**
