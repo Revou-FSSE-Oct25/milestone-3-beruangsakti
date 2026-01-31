@@ -7,7 +7,10 @@ const API_BASE_URL = 'https://fakestoreapi.com';
  * @returns Promise<Product[]> - Array of products
  */
 export async function getAllProducts(): Promise<Product[]> {
-  const response = await fetch(`${API_BASE_URL}/products`);
+  const response = await fetch(`${API_BASE_URL}/products`, {
+    // Force cache to ensure data is available for static generation
+    cache: 'force-cache',
+  });
 
   if (!response.ok) {
     throw new Error('Failed to fetch products');
@@ -22,7 +25,11 @@ export async function getAllProducts(): Promise<Product[]> {
  * @returns Promise<Product> - Product details
  */
 export async function getProductById(id: string): Promise<Product> {
-  const response = await fetch(`${API_BASE_URL}/products/${id}`);
+  const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+    // Force cache to ensure data is available for static generation
+    // This ensures the data is cached at build time and available at runtime
+    cache: 'force-cache',
+  });
 
   if (!response.ok) {
     throw new Error('Failed to fetch product');

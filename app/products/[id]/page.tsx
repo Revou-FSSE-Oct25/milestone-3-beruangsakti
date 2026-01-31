@@ -11,9 +11,9 @@ import AddToCartButton from './AddToCartButton';
 export async function generateStaticParams() {
   try {
     const products = await getAllProducts();
-    // Return first 10 products as static, rest will be SSR
-    // This improves build time while still allowing dynamic routes
-    return products.slice(0, 10).map((product) => ({
+    // Generate ALL products as static pages
+    // The API returns 20 products, so we pre-render all of them
+    return products.map((product) => ({
       id: product.id.toString(),
     }));
   } catch (error) {
