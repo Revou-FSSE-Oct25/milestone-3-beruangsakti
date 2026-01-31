@@ -28,6 +28,8 @@ export async function generateStaticParams() {
  * Uses SSG (Static Site Generation) with pre-fetched data
  * Fetches all products once at build time, then finds the specific product
  * This avoids multiple API calls that can fail on Vercel
+ *
+ * NOTE: Latest deployment to test Vercel build compatibility
  */
 export default async function ProductDetailPage({
   params,
