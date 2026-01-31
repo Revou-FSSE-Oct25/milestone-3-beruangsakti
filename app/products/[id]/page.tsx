@@ -1,35 +1,15 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getAllProducts } from '@/lib/api';
+import { getProductById } from '@/lib/api';
 import { Product } from '@/lib/types';
 import AddToCartButton from './AddToCartButton';
 
 /**
- * Generate static params for product routes
- * This tells Next.js which product IDs are valid
- */
-export async function generateStaticParams() {
-  try {
-    const products = await getAllProducts();
-    // Generate ALL products as static pages
-    // The API returns 20 products, so we pre-render all of them
-    return products.map((product) => ({
-      id: product.id.toString(),
-    }));
-  } catch (error) {
-    console.error('Failed to generate static params:', error);
-    return [];
-  }
-}
-
-/**
  * Product Detail Page - Server Component
- * Uses SSG (Static Site Generation) with pre-fetched data
- * Fetches all products once at build time, then finds the specific product
- * This avoids multiple API calls that can fail on Vercel
- *
- * NOTE: Latest deployment to test Vercel build compatibility
+ * Uses SSR (Server-Side Rendering) as per assignment requirements
+ * Fetches product data dynamically on each request
+ * This approach doesn't require pre-generation at build time
  */
 export default async function ProductDetailPage({
   params,
@@ -38,22 +18,12 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
 
-  // Fetch all products once during build
-  // This data is then embedded in the static HTML
-  let products: Product[];
+  // Fetch the specific product on each request (SSR)
+  let product: Product;
   try {
-    products = await getAllProducts();
+    product = await getProductById(id);
   } catch (error) {
-    console.error('Failed to fetch products:', error);
-    notFound();
-    return; // TypeScript safety
-  }
-
-  // Find the specific product from the list
-  const product = products.find((p) => p.id === parseInt(id));
-
-  // If product not found, show 404
-  if (!product) {
+    console.error('Failed to fetch product:', error);
     notFound();
     return; // TypeScript safety
   }
