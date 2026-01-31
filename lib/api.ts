@@ -1,23 +1,32 @@
 import { Product } from './types';
 import { FALLBACK_PRODUCTS } from './products-data';
 
-const API_BASE_URL = 'https://fakestoreapi.com';
-
 /**
- * Fetch all products from FakeStoreAPI
+ * Fetch all products from FakeStoreAPI through our proxy
+ *
+ * Uses /api/proxy/products to bypass Cloudflare bot protection
+ * Falls back to embedded data if proxy fails
  * @returns Promise<Product[]> - Array of products
  */
 export async function getAllProducts(): Promise<Product[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/products`, {
+    // Try to fetch through our proxy first
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/proxy/products`, {
       cache: 'force-cache',
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch products');
+      throw new Error('Proxy request failed');
     }
 
-    return response.json();
+    const data = await response.json();
+
+    // Check if proxy returned an error
+    if ('error' in data) {
+      throw new Error(data.error);
+    }
+
+    return data as Product[];
   } catch (error) {
     // Fallback to embedded data if API fails (e.g., Cloudflare blocking on Vercel)
     console.warn('API fetch failed for all products, using fallback data:', error);
@@ -26,23 +35,35 @@ export async function getAllProducts(): Promise<Product[]> {
 }
 
 /**
- * Fetch a single product by ID from FakeStoreAPI
+ * Fetch a single product by ID from FakeStoreAPI through our proxy
+ *
+ * Uses /api/proxy/products/[id] to bypass Cloudflare bot protection
+ * Falls back to embedded data if proxy fails
  * @param id - Product ID
  * @returns Promise<Product> - Product details
  */
 export async function getProductById(id: string): Promise<Product> {
   try {
-    const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-      // Disable caching for SSR - fetch fresh data on each request
-      cache: 'no-store',
-      next: { revalidate: 0 },
-    });
+    // Try to fetch through our proxy first
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/proxy/products/${id}`,
+      {
+        cache: 'no-store',
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch product ${id}: ${response.status} ${response.statusText}`);
+      throw new Error(`Proxy request failed: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+
+    // Check if proxy returned an error
+    if ('error' in data) {
+      throw new Error(data.error);
+    }
+
+    return data as Product;
   } catch (error) {
     // Fallback to embedded data if API fails (e.g., Cloudflare blocking on Vercel)
     console.warn(`API fetch failed for product ${id}, using fallback data:`, error);
@@ -59,13 +80,9 @@ export async function getProductById(id: string): Promise<Product> {
  * @returns Promise<string[]> - Array of category names
  */
 export async function getCategories(): Promise<string[]> {
-  const response = await fetch(`${API_BASE_URL}/products/categories`);
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch categories');
-  }
-
-  return response.json();
+  // Categories are not currently used in the application
+  // This is a placeholder for future category filtering
+  return [];
 }
 
 /**
@@ -74,11 +91,7 @@ export async function getCategories(): Promise<string[]> {
  * @returns Promise<Product[]> - Array of products in the category
  */
 export async function getProductsByCategory(category: string): Promise<Product[]> {
-  const response = await fetch(`${API_BASE_URL}/products/category/${category}`);
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch products by category');
-  }
-
-  return response.json();
+  // Category filtering is not currently used in the application
+  // This is a placeholder for future category filtering
+  return [];
 }

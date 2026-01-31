@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getProductById } from '@/lib/api';
 import { Product } from '@/lib/types';
+import { getProxiedImageUrl } from '@/lib/products-data';
 import AddToCartButton from './AddToCartButton';
 
 /**
@@ -45,12 +46,13 @@ export default async function ProductDetailPage({
           {/* Product Image */}
           <div className="relative h-96 bg-gray-100 rounded-lg">
             <Image
-              src={product.image}
+              src={getProxiedImageUrl(product.image)}
               alt={product.title}
               fill
               className="object-contain p-8"
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
+              unoptimized={product.image.startsWith('https://fakestoreapi.com/')}
             />
           </div>
 
