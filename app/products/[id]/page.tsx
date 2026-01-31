@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getProductById, getAllProducts } from '@/lib/api';
+import { getAllProducts } from '@/lib/api';
+import { Product } from '@/lib/types';
 import AddToCartButton from './AddToCartButton';
 
 /**
@@ -24,8 +25,9 @@ export async function generateStaticParams() {
 
 /**
  * Product Detail Page - Server Component
- * Uses SSR (Server-Side Rendering) to fetch product data
- * Dynamic route: /products/[id]
+ * Uses SSG (Static Site Generation) with pre-fetched data
+ * Fetches all products once at build time, then finds the specific product
+ * This avoids multiple API calls that can fail on Vercel
  */
 export default async function ProductDetailPage({
   params,
@@ -34,12 +36,24 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
 
-  let product;
+  // Fetch all products once during build
+  // This data is then embedded in the static HTML
+  let products: Product[];
   try {
-    product = await getProductById(id);
+    products = await getAllProducts();
   } catch (error) {
-    console.error('Failed to fetch product:', error);
+    console.error('Failed to fetch products:', error);
     notFound();
+    return; // TypeScript safety
+  }
+
+  // Find the specific product from the list
+  const product = products.find((p) => p.id === parseInt(id));
+
+  // If product not found, show 404
+  if (!product) {
+    notFound();
+    return; // TypeScript safety
   }
 
   return (
