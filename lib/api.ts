@@ -5,54 +5,39 @@ const API_BASE_URL = 'https://fakestoreapi.com';
 
 /**
  * Fetch all products from FakeStoreAPI
- * Falls back to embedded data if API fails
+ *
+ * NOTE: We use fallback data directly to ensure consistency between
+ * homepage and product detail pages. The external API may fail or return
+ * different data, causing images to be inconsistent across pages.
+ *
  * @returns Promise<Product[]> - Array of products
  */
 export async function getAllProducts(): Promise<Product[]> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/products`, {
-      cache: 'force-cache',
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch products');
-    }
-
-    return response.json();
-  } catch (error) {
-    // Fallback to embedded data if API fails (e.g., Cloudflare blocking on Vercel)
-    console.warn('API fetch failed for all products, using fallback data:', error);
-    return FALLBACK_PRODUCTS;
-  }
+  // Use fallback data directly for consistency
+  // This ensures homepage and product pages show the same images
+  return FALLBACK_PRODUCTS;
 }
 
 /**
  * Fetch a single product by ID from FakeStoreAPI
- * Falls back to embedded data if API fails
+ *
+ * NOTE: We use fallback data directly to ensure consistency between
+ * homepage and product detail pages. The external API may fail or return
+ * different data, causing images to be inconsistent across pages.
+ *
  * @param id - Product ID
  * @returns Promise<Product> - Product details
  */
 export async function getProductById(id: string): Promise<Product> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-      cache: 'no-store',
-      next: { revalidate: 0 },
-    });
+  // Use fallback data directly for consistency
+  // This ensures homepage and product pages show the same images
+  const product = FALLBACK_PRODUCTS.find(p => p.id === parseInt(id));
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch product ${id}: ${response.status} ${response.statusText}`);
-    }
-
-    return response.json();
-  } catch (error) {
-    // Fallback to embedded data if API fails (e.g., Cloudflare blocking on Vercel)
-    console.warn(`API fetch failed for product ${id}, using fallback data:`, error);
-    const fallbackProduct = FALLBACK_PRODUCTS.find(p => p.id === parseInt(id));
-    if (!fallbackProduct) {
-      throw new Error(`Product ${id} not found in fallback data`);
-    }
-    return fallbackProduct;
+  if (!product) {
+    throw new Error(`Product ${id} not found`);
   }
+
+  return product;
 }
 
 /**

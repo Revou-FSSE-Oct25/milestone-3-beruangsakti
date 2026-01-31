@@ -172,10 +172,8 @@ export const FALLBACK_PRODUCTS: Product[] = [
 
 /**
  * Identity function for image URLs
- * Proxy approach doesn't work due to Cloudflare's advanced bot detection (TLS fingerprinting, etc.)
- * Using Unsplash CDN images directly which work reliably
+ * Images are from Unsplash CDN and work directly without proxying
  */
 export function getProxiedImageUrl(imageUrl: string): string {
-  // Return URL as-is - Unsplash images work directly
   return imageUrl;
 }
