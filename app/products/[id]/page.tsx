@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getProductById } from '@/lib/api';
+import { getProductById, getProxiedImageUrl } from '@/lib/api';
 import { Product } from '@/lib/types';
 import AddToCartButton from './AddToCartButton';
 
@@ -44,7 +44,7 @@ export default async function ProductDetailPage({
           {/* Product Image */}
           <div className="relative h-96 bg-gray-100 rounded-lg flex items-center justify-center p-8">
             <img
-              src={product.image}
+              src={getProxiedImageUrl(product.image)}
               alt={product.title}
               className="max-h-full max-w-full object-contain"
             />

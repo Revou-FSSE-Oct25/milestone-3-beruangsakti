@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Product } from '@/lib/types';
+import { getProxiedImageUrl } from '@/lib/api';
 
 interface ProductCardProps {
   product: Product;
@@ -18,7 +19,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Product Image */}
         <div className="h-64 w-full bg-gray-200 flex items-center justify-center p-4">
           <img
-            src={product.image}
+            src={getProxiedImageUrl(product.image)}
             alt={product.title}
             className="max-h-full max-w-full object-contain"
           />

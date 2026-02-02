@@ -78,3 +78,23 @@ export async function getProductsByCategory(category: string): Promise<Product[]
   // This is a placeholder for future category filtering
   return [];
 }
+
+/**
+ * Get proxied image URL to avoid CORB blocking
+ *
+ * fakestoreapi.com returns wrong Content-Type header (text/html instead of image/jpeg),
+ * causing CORB (Cross-Origin Read Blocking) to block images in browsers.
+ *
+ * This function wraps the image URL in our proxy API route that fetches the image
+ * and returns it with the correct Content-Type header.
+ *
+ * @param imageUrl - Original image URL from fakestoreapi.com
+ * @returns Proxied URL through our API route (e.g., /api/image-proxy?url=...)
+ *
+ * Example:
+ * Input:  "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
+ * Output: "/api/image-proxy?url=https%3A%2F%2Ffakestoreapi.com%2Fimg%2F81fPKd-2AYL._AC_SL1500_.jpg"
+ */
+export function getProxiedImageUrl(imageUrl: string): string {
+  return `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+}
