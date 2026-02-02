@@ -6,20 +6,7 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'fakestoreapi.com',
-        port: '',
-        pathname: '/img/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    unoptimized: true,
   },
 };
 
