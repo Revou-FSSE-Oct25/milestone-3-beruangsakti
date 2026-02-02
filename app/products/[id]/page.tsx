@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { getProductById } from '@/lib/api';
 import { Product } from '@/lib/types';
@@ -43,15 +42,11 @@ export default async function ProductDetailPage({
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
           {/* Product Image */}
-          <div className="relative h-96 bg-gray-100 rounded-lg">
-            <Image
+          <div className="relative h-96 bg-gray-100 rounded-lg flex items-center justify-center p-8">
+            <img
               src={product.image}
               alt={product.title}
-              fill
-              className="object-contain p-8"
-              priority
-              sizes="(max-width: 768px) 100vw, 50vw"
-              unoptimized
+              className="max-h-full max-w-full object-contain"
             />
           </div>
 

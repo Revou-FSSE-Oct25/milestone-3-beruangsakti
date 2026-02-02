@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Product } from '@/lib/types';
 
 interface ProductCardProps {
@@ -17,14 +16,11 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Link href={`/products/${product.id}`}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full flex flex-col">
         {/* Product Image */}
-        <div className="relative h-64 w-full bg-gray-200">
-          <Image
+        <div className="h-64 w-full bg-gray-200 flex items-center justify-center p-4">
+          <img
             src={product.image}
             alt={product.title}
-            fill
-            className="object-contain p-4"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            unoptimized
+            className="max-h-full max-w-full object-contain"
           />
         </div>
 
