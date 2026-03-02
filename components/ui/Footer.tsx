@@ -31,6 +31,16 @@ export default function Footer() {
                   Cart
                 </Link>
               </li>
+              <li>
+                <Link href="/about" className="text-gray-400 hover:text-white">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-gray-400 hover:text-white">
+                  Contact Us
+                </Link>
+              </li>
             </ul>
           </div>
 

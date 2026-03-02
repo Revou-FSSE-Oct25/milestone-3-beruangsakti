@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCart } from '@/lib/cart-context';
 import { useAuth } from '@/lib/auth-context';
+import UserDropdown from './UserDropdown';
 
 /**
  * Header navigation component
@@ -64,17 +65,7 @@ export default function Header() {
 
             {/* Auth Section */}
             {isAuthenticated && user ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">
-                  Hi, <span className="font-medium text-gray-900">{user.firstname}</span>
-                </span>
-                <button
-                  onClick={logout}
-                  className="text-gray-700 hover:text-red-600 font-medium text-sm transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
+              <UserDropdown user={user} onLogout={logout} />
             ) : (
               <Link
                 href="/login"
