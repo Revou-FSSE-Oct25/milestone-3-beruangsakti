@@ -1,30 +1,67 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getProductById, getProxiedImageUrl } from '@/lib/api';
 import { Product } from '@/lib/types';
+import { getProxiedImageUrl } from '@/lib/api';
 import AddToCartButton from './AddToCartButton';
 
 /**
- * Product Detail Page - Server Component
- * Uses SSR (Server-Side Rendering) as per assignment requirements
- * Fetches product data dynamically on each request
- * This approach doesn't require pre-generation at build time
+ * Product Detail Page - Client Component
+ * Fetches product data from API to ensure consistent data across all contexts
+ * This fixes the 404 error for newly added products
  */
-export default async function ProductDetailPage({
+export default function ProductDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  // Fetch the specific product on each request (SSR)
-  let product: Product;
-  try {
-    product = await getProductById(id);
-  } catch (error) {
-    console.error('Failed to fetch product:', error);
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const { id } = await params;
+        const response = await fetch(`/api/admin/products/${id}`);
+
+        if (!response.ok) {
+          setError(true);
+          return;
+        }
+
+        const data = await response.json();
+        setProduct(data);
+      } catch (err) {
+        setError(true);
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProduct();
+  }, [params]);
+
+  if (error) {
     notFound();
-    return; // TypeScript safety
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    notFound();
+    return null;
   }
 
   return (

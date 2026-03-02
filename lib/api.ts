@@ -90,11 +90,12 @@ export async function getProductsByCategory(category: string): Promise<Product[]
  *
  * @param imageUrl - Original image URL from fakestoreapi.com
  * @returns Proxied URL through our API route (e.g., /api/image-proxy?url=...)
- *
- * Example:
- * Input:  "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
- * Output: "/api/image-proxy?url=https%3A%2F%2Ffakestoreapi.com%2Fimg%2F81fPKd-2AYL._AC_SL1500_.jpg"
  */
 export function getProxiedImageUrl(imageUrl: string): string {
-  return `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+  // If it's a FakeStoreAPI image, use our proxy
+  if (imageUrl.startsWith('https://fakestoreapi.com/img/')) {
+    return `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+  }
+  // For other images (user-added products), return as-is
+  return imageUrl;
 }

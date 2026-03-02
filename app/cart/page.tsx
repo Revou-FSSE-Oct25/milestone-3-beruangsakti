@@ -2,15 +2,15 @@
 
 import { useCart } from '@/lib/cart-context';
 import { useToast } from '@/lib/toast-context';
-import Image from 'next/image';
 import Link from 'next/link';
+import { getProxiedImageUrl } from '@/lib/api';
 
 /**
  * Cart Page - Client Component
- * Displays items in the shopping cart with total price
+ * Displays items in the shopping cart with quantity controls and checkout
  */
 export default function CartPage() {
-  const { cart, removeFromCart, clearCart, getCartTotal, getCartCount } = useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart, getCartTotal, getCartCount } = useCart();
   const { showToast } = useToast();
 
   const cartTotal = getCartTotal();
@@ -55,13 +55,11 @@ export default function CartPage() {
                 className="bg-white rounded-lg shadow p-4 flex items-center space-x-4"
               >
                 {/* Product Image */}
-                <div className="relative h-24 w-24 bg-gray-100 rounded flex-shrink-0">
-                  <Image
-                    src={item.product.image}
+                <div className="relative h-24 w-24 bg-gray-100 rounded flex-shrink-0 overflow-hidden">
+                  <img
+                    src={getProxiedImageUrl(item.product.image)}
                     alt={item.product.title}
-                    fill
-                    className="object-contain p-2"
-                    sizes="96px"
+                    className="w-full h-full object-contain p-2"
                   />
                 </div>
 
@@ -71,8 +69,25 @@ export default function CartPage() {
                     {item.product.title}
                   </h3>
                   <p className="text-gray-600">
-                    ${item.product.price.toFixed(2)} × {item.quantity}
+                    ${item.product.price.toFixed(2)}
                   </p>
+                </div>
+
+                {/* Quantity Controls */}
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                    className="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                  >
+                    -
+                  </button>
+                  <span className="w-8 text-center font-medium">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                    className="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                  >
+                    +
+                  </button>
                 </div>
 
                 {/* Item Total & Remove Button */}
@@ -81,7 +96,10 @@ export default function CartPage() {
                     ${(item.product.price * item.quantity).toFixed(2)}
                   </p>
                   <button
-                    onClick={() => removeFromCart(item.product.id)}
+                    onClick={() => {
+                      removeFromCart(item.product.id);
+                      showToast('Item removed from cart', 'info');
+                    }}
                     className="text-red-600 hover:text-red-800 text-sm font-medium"
                   >
                     Remove
@@ -92,7 +110,10 @@ export default function CartPage() {
 
             {/* Clear Cart Button */}
             <button
-              onClick={clearCart}
+              onClick={() => {
+                clearCart();
+                showToast('Cart cleared', 'info');
+              }}
               className="w-full mt-4 bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors"
             >
               Clear Cart
@@ -123,12 +144,12 @@ export default function CartPage() {
                   <span>${cartTotal.toFixed(2)}</span>
                 </div>
 
-                <button
-                  className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                  onClick={() => showToast('Checkout functionality coming soon!', 'info')}
+                <Link
+                  href="/checkout"
+                  className="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center"
                 >
                   Proceed to Checkout
-                </button>
+                </Link>
 
                 <Link
                   href="/"

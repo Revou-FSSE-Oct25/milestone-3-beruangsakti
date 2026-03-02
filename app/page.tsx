@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react';
 import ProductCard from '@/components/ui/ProductCard';
 import { Product } from '@/lib/types';
-import { getAllProducts } from '@/lib/api';
 
 /**
  * Home page - Product listing
- * Fetches products from FakeStoreAPI using CSR (Client-Side Rendering)
+ * Fetches products from our local API (synced with admin panel)
  * Displays products in a responsive grid
  */
 export default function Home() {
@@ -18,7 +17,12 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const data = await getAllProducts();
+        // Use our local API so changes in admin panel are reflected here
+        const response = await fetch('/api/admin/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
         setProducts(data);
       } catch (err) {
         setError('Failed to load products. Please try again later.');

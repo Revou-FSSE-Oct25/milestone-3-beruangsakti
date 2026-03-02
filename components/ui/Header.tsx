@@ -2,13 +2,15 @@
 
 import Link from 'next/link';
 import { useCart } from '@/lib/cart-context';
+import { useAuth } from '@/lib/auth-context';
 
 /**
  * Header navigation component
- * Includes logo, navigation links, and cart icon with item count
+ * Includes logo, navigation links, cart icon, and user menu
  */
 export default function Header() {
   const { getCartCount } = useCart();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const cartCount = getCartCount();
 
@@ -59,6 +61,28 @@ export default function Header() {
                 </span>
               )}
             </Link>
+
+            {/* Auth Section */}
+            {isAuthenticated && user ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">
+                  Hi, <span className="font-medium text-gray-900">{user.firstname}</span>
+                </span>
+                <button
+                  onClick={logout}
+                  className="text-gray-700 hover:text-red-600 font-medium text-sm transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                Sign In
+              </Link>
+            )}
           </nav>
         </div>
       </div>
